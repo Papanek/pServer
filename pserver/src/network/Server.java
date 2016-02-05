@@ -21,7 +21,7 @@ public class Server {
     private ServerSocket serverSocket;
     private InetAddress hostAddress;
     private Socket socket;
-    private LinkedList<Player> players;
+    public static LinkedList<Player> players;
     public Server(){
         players = new LinkedList<>();
         try {
@@ -43,10 +43,10 @@ public class Server {
         System.out.println("Pong Server Started!");
         Player player;
         while(true){
-            for(int i=0; i<players.size(); i++){
+            for(int i = 0; i< players.size(); i++){
                 player = players.get(i);
                 if(!player.isConnected()){
-                    System.out.println(player+" removed due to lack of connection.");
+                    System.out.println(player +" removed due to lack of connection.");
                     player.purge();
                     players.remove(i);
                 }
