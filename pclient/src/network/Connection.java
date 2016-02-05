@@ -1,7 +1,4 @@
-package game;
-
-import network.IBroadcast;
-import network.Server;
+package network;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,12 +8,12 @@ import java.net.Socket;
 
 /**
  * ******************************
- * Project: pserver
+ * Project: pclient
  * Creator: Daniel Papanek
  * Date :   2/4/2016
  * ******************************
  **/
-public class Player implements IBroadcast {
+public class Connection {
     private Socket socket;
     private PrintWriter output;
     private BufferedReader input;
@@ -24,78 +21,68 @@ public class Player implements IBroadcast {
     private Listener listener;
     private int THROTTLE = 1000;
 
-    public Player(Socket socket){
-        this.socket = socket;
-        try {
-            output = new PrintWriter(socket.getOutputStream(),true);
-            input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        } catch (Exception e){
-            System.out.println("Error setting up input/output");
-            purge();
-        }
-        if(connected) {
-            listener = new Listener();
-            listener.start();
-        }
-    }
-
     private class Listener extends Thread{
         public void run(){
             String inputLine;
-            String log;
             while (connected){
                 try {
+                    System.out.println("Waiting to get msgs");
                     while ((inputLine = input.readLine())!=null){
                         System.out.println(inputLine);
-                        broadcast(inputLine);
                     }
                 } catch (IOException e){
                     System.out.println(toString()+ " connection closed. Reading input aborted.");
                     purge();
                 }
+
                 try {
                     Thread.sleep(THROTTLE);
                 } catch (InterruptedException e){
                     System.out.println(toString()+" connection closed. Thread aborted");
                     purge();
                 }
-
             }
         }
     }
 
-    @Override
-    public void broadcast(String text) {
-        Player player;
-        for(int i = 0; i< Server.players.size(); i++){
-            player = Server.players.get(i);
-            if(!player.equals(this)) {
-                player.sendMessage(text);
-            }
+    public Connection(String ip, int port){
+        try{
+            socket = new Socket(ip,port);
+            output = new PrintWriter(socket.getOutputStream(),true);
+            input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        } catch (Exception e){
+            System.out.println("Error setting up connection to: "+ip+":"+port);
+            purge();
+        }
+        if(connected) {
+            System.out.println("Connected to "+ip+":"+port);
+            listener = new Listener();
+            listener.start();
         }
     }
 
-    @Override
-    public void sendMessage(String text) {
-        output.println(text);
-    }
-
-    public boolean isConnected(){
-        return connected;
+    public void sendToServer(String text){
+        output.printf(text+"%n%n");
     }
 
     public void purge(){
         try {
             connected = false;
-            socket.close();
+            if(socket!=null) {
+                socket.close();
+            }
+            if(output!=null) {
+                output.close();
+            }
+            if(input!=null) {
+                input.close();
+            }
         } catch (IOException e){
             System.out.println("Could not purge "+socket+".");
         }
     }
 
-    @Override
-    public String toString(){
-        return socket.toString();
+    public boolean isConnected(){
+        return connected;
     }
-
 }
