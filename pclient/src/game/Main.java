@@ -1,5 +1,6 @@
 package game;
 
+import engine.GameEngine;
 import network.Connection;
 
 import java.util.Scanner;
@@ -33,5 +34,7 @@ public class Main {
         } finally {
             connection.purge();
         }
+        GameEngine engine = new GameEngine(600,400);
+        engine.start();
     }
 }
