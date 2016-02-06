@@ -1,13 +1,13 @@
 package network;
 
-import game.Player;
+import network.listeners.ConnectionListener;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
+import java.util.Scanner;
 
 /**
  * ******************************
@@ -16,49 +16,64 @@ import java.util.LinkedList;
  * Date :   2/4/2016
  * ******************************
  **/
-public class Server {
+public class Server extends Thread {
+    public static LinkedList<Connection> connections;
     private final int PORT = 30480;
-    private ServerSocket serverSocket;
     private InetAddress hostAddress;
-    private Socket socket;
-    public static LinkedList<Player> players;
-    public Server(){
-        players = new LinkedList<>();
+    private ConnectionListener connectionListener;
+    private boolean running = true;
+
+    public Server() {
+        connections = new LinkedList<>();
         try {
             hostAddress = InetAddress.getLocalHost();
-        } catch (UnknownHostException e){
+        } catch (UnknownHostException e) {
             e.printStackTrace();
             System.exit(-1);
         }
         try {
-            serverSocket = new ServerSocket(PORT,0,hostAddress);
-        } catch (IOException e){
+            connectionListener = new ConnectionListener(this, new ServerSocket(PORT, 0, hostAddress));
+            System.out.println("Server socket created.");
+        } catch (IOException e) {
             e.printStackTrace();
             System.exit(-1);
         }
-        System.out.println("Socket "+serverSocket+" created.");
+        connectionListener.start();
     }
 
-    public void run(){
+    public void run() {
         System.out.println("Pong Server Started!");
-        Player player;
-        while(true){
-            for(int i = 0; i< players.size(); i++){
-                player = players.get(i);
-                if(!player.isConnected()){
-                    System.out.println(player +" removed due to lack of connection.");
-                    player.purge();
-                    players.remove(i);
-                }
-            }
-            System.out.println("Listening for new connections..");
-            try{
-                socket = serverSocket.accept();
-            } catch (IOException e){
-                System.out.println("No user connected");
-            }
-            players.add(new Player(socket));
-            System.out.print("Player "+socket+" added.");
+        System.out.println("q to shutdown server");
+        Scanner in = new Scanner(System.in);
+        String command = "";
+        while (!command.equals("q")){
+            command = in.nextLine();
+            System.out.print(command);
         }
+        shutdown();
+    }
+
+    public void addConnection(Connection connection) {
+        connections.add(connection);
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    private void shutdown(){
+        while(connections.size()>0){
+            for(Connection c : connections){
+                c.disconnect();
+            }
+            try{
+                Thread.sleep(100);
+            } catch (InterruptedException e){
+
+            }
+        }
+        running = false;
+        connectionListener.interrupt();
+        System.out.println("Server Shutdown");
     }
 }

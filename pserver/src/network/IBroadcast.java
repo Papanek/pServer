@@ -9,5 +9,6 @@ package network;
  **/
 public interface IBroadcast {
     void broadcast(String text);
+
     void sendMessage(String text);
 }
