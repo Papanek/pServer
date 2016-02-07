@@ -1,8 +1,10 @@
 package network;
 
+import game.GameState;
 import network.listeners.InputListener;
 
-import java.io.PrintWriter;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
@@ -12,39 +14,41 @@ import java.net.Socket;
  * Date :   2/4/2016
  * ******************************
  **/
-public class Connection implements IBroadcast {
-    private PrintWriter output;
+public class Connection {
+    private ObjectOutputStream output;
     private boolean connected = true;
     private InputListener inputListener;
-    private int THROTTLE = 1000;
+    private static int idSequence = 5000;
+    private String id;
 
     public Connection(Socket socket) {
         try {
-            output = new PrintWriter(socket.getOutputStream(), true);
+            output = new ObjectOutputStream(socket.getOutputStream());
+            inputListener = new InputListener(this, socket);
+            inputListener.start();
+            id = ""+idSequence++;
+            System.out.println( "Connection Established. "+socket+" User ID: "+id);
         } catch (Exception e) {
             System.out.println("Error setting up input/output");
             disconnect();
         }
-        if (connected) {
-            inputListener = new InputListener(this, socket);
-            inputListener.start();
+        sendUserID();
+    }
+
+    public void sendGameState(GameState state) {
+        try {
+            output.writeObject(state);
+        } catch (IOException e){
+
         }
     }
 
-    @Override
-    public void broadcast(String text) {
-        Connection connection;
-        for (int i = 0; i < Server.connections.size(); i++) {
-            connection = Server.connections.get(i);
-            if (!connection.equals(this)) {
-                connection.sendMessage(text);
-            }
-        }
-    }
+    private void sendUserID(){
+        try {
+            output.writeObject(new String(id));
+        } catch (IOException e){
 
-    @Override
-    public void sendMessage(String text) {
-        output.println(text);
+        }
     }
 
     public boolean isConnected() {
@@ -57,5 +61,9 @@ public class Connection implements IBroadcast {
 
     public void disconnect(){
         connected = false;
+    }
+
+    public String getId(){
+        return id;
     }
 }

@@ -14,4 +14,6 @@ public final class GameConstants {
     public static final int PLAYER_MOVESPEED = 1;
     public static final int BALL_WIDTH = 50;
     public static final int BALL_HEIGHT = 50;
+    public static final int ARENA_WIDTH = 800;
+    public static final int ARENA_HEIGHT = 600;
 }

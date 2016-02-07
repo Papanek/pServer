@@ -8,6 +8,6 @@ package game;
  * ******************************
  **/
 public interface Locatable {
-    int getX();
-    int getY();
+    double getX();
+    double getY();
 }

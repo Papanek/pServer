@@ -34,7 +34,6 @@ public class InputListener extends Thread {
             try {
                 while ((inputLine = input.readLine()) != null) {
                     System.out.println(inputLine);
-                    connection.broadcast(inputLine);
                 }
             } catch (IOException e) {
                 System.out.println(toString() + " input interrupted.");

@@ -1,13 +1,12 @@
 package network;
 
+import engine.GameEngine;
 import network.listeners.ConnectionListener;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.UnknownHostException;
-import java.util.LinkedList;
-import java.util.Scanner;
 
 /**
  * ******************************
@@ -17,14 +16,21 @@ import java.util.Scanner;
  * ******************************
  **/
 public class Server extends Thread {
-    public static LinkedList<Connection> connections;
-    private final int PORT = 30480;
     private InetAddress hostAddress;
+    private final int PORT = 30480;
+
+    private static Server theServer = new Server();
+    private ConnectionList connections;
+
     private ConnectionListener connectionListener;
     private boolean running = true;
 
-    public Server() {
-        connections = new LinkedList<>();
+    public static synchronized Server getInstance() {
+        return theServer;
+    }
+
+    private Server() {
+        connections = new ConnectionList();
         try {
             hostAddress = InetAddress.getLocalHost();
         } catch (UnknownHostException e) {
@@ -39,41 +45,41 @@ public class Server extends Thread {
             System.exit(-1);
         }
         connectionListener.start();
+        this.start();
     }
 
     public void run() {
-        System.out.println("Pong Server Started!");
-        System.out.println("q to shutdown server");
-        Scanner in = new Scanner(System.in);
-        String command = "";
-        while (!command.equals("q")){
-            command = in.nextLine();
-            System.out.print(command);
+        System.out.println("Pong Started!");
+        GameEngine engine = null;
+        while (running){
+            System.out.println(clientsConnected());
+            if(clientsConnected()==2&&engine==null){
+                engine = new GameEngine();
+                engine.start();
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e){}
         }
         shutdown();
     }
 
-    public void addConnection(Connection connection) {
-        connections.add(connection);
+    private void shutdown(){
+        connections.disconnectAll();
+        running = false;
+        connectionListener.interrupt();
+        System.out.println("Server Shutdown");
+    }
+
+    public ConnectionList getConnections(){
+        return connections;
     }
 
     public boolean isRunning() {
         return running;
     }
 
-    private void shutdown(){
-        while(connections.size()>0){
-            for(Connection c : connections){
-                c.disconnect();
-            }
-            try{
-                Thread.sleep(100);
-            } catch (InterruptedException e){
-
-            }
-        }
-        running = false;
-        connectionListener.interrupt();
-        System.out.println("Server Shutdown");
+    public int clientsConnected(){
+        return connections.size();
     }
 }

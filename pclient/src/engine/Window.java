@@ -18,11 +18,12 @@ import java.io.BufferedReader;
  **/
 public class Window extends JFrame {
     private Panel panel;
-    public Window(int width, int height){
-        panel = new Panel(width,height);
+
+    public Window(int width, int height) {
+        panel = new Panel(width, height);
     }
 
-    public void init(){
+    public void init() {
         panel.init();
         this.add(panel);
         this.setResizable(false);
@@ -31,11 +32,11 @@ public class Window extends JFrame {
         this.setVisible(true);
     }
 
-    public void update(){
+    public void update() {
         panel.update();
     }
 
-    public void render(){
+    public void render() {
         panel.render();
     }
 }

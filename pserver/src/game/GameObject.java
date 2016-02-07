@@ -7,20 +7,22 @@ package game;
  * Date :   2/6/2016
  * ******************************
  **/
-public class GameObject implements Locatable {
-    private int x,y;
-    public GameObject(int x, int y){
+public abstract class GameObject implements Locatable, Drawable, Updatable, java.io.Serializable {
+
+    protected double x,y;
+
+    public GameObject(double x, double y){
         this.x = x;
         this.y = y;
     }
 
     @Override
-    public int getX() {
+    public double getX() {
         return x;
     }
 
     @Override
-    public int getY() {
+    public double getY() {
         return y;
     }
 }

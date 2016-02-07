@@ -1,5 +1,12 @@
 package engine;
 
+import game.GameState;
+import game.pong.PongLogic;
+import game.pong.state.PongGameState;
+
+import javax.swing.*;
+import java.awt.*;
+
 /**
  * ******************************
  * Project: pclient
@@ -8,58 +15,78 @@ package engine;
  * ******************************
  **/
 public class GameEngine implements Runnable {
-    private final int FPS = 75;
-    private final int UPS = 30;
+    private final int FPS = 1000;
+    private final int UPS = 1000;
+    JFrame frame = new JFrame();
+    Panel panel;
     private Thread gameLoopThread;
-    private Window window;
     private Timer timer;
-    public GameEngine(int width, int height){
-        gameLoopThread = new Thread(this,"Game_loop_thread");
-        window = new Window(width,height);
+    private GameLogic gameLogic;
+    private GameState gameState;
+
+    public GameEngine(int width, int height) {
+        gameLoopThread = new Thread(this, "Game_loop_thread");
+        gameLogic = new PongLogic();
+        gameState = new PongGameState(width, height);
         timer = new Timer();
+        panel = new Panel(800,600,gameState);
+        panel.setPreferredSize(new Dimension(800, 600));
+        panel.setFocusable(true);
+        panel.requestFocusInWindow();
+        frame.add(panel);
+        frame.setResizable(false);
+        frame.pack();
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
     }
-    public void start(){
+
+    public void start() {
         gameLoopThread.start();
     }
+
     @Override
     public void run() {
         init();
-        gameloop();
+        gameLoop();
     }
 
-    private void init(){
+    private void init() {
         timer.init();
-        window.init();
+        gameLogic.init();
     }
 
-    private void gameloop(){
+    private void gameLoop() {
         float ellapsedTime;
         float accumulator = 0f;
         float interval = 1f / UPS;
-
         boolean running = true;
-        long x;
-        while (running){
-            x = System.nanoTime();
+        int x = 0;
+        while (running) {
             ellapsedTime = timer.getEllapsedTime();
             accumulator += ellapsedTime;
-            while (accumulator >= interval){
-                window.update();
+
+            gameLogic.input();
+
+            while (accumulator >= interval) {
+                gameLogic.update(gameState);
                 accumulator -= interval;
             }
-            System.out.println(System.nanoTime()-x);
-            window.render();
+
+            panel.render(gameState, accumulator / interval);
+            //TODO output game state to player connections
+
             sync();
         }
     }
 
-    private void sync(){
+    private void sync() {
         float loopSlot = 1f / FPS;
         double endTime = timer.getLastLoopTime() + loopSlot;
-        while ( timer.getTime() < endTime ){
+        while (timer.getTime() < endTime) {
             try {
                 Thread.sleep(1);
-            } catch (InterruptedException e){
+            } catch (InterruptedException e) {
             }
         }
     }

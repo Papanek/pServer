@@ -1,6 +1,7 @@
 package network.listeners;
 
 import network.Connection;
+import network.ConnectionList;
 import network.Server;
 
 import java.io.IOException;
@@ -20,6 +21,7 @@ public class ConnectionListener extends Thread {
     private Socket connectionSocket;
     private ConnectionChecker checker;
 
+
     public ConnectionListener(Server server, ServerSocket serverSocket) {
         this.server = server;
         this.serverSocket = serverSocket;
@@ -38,12 +40,13 @@ public class ConnectionListener extends Thread {
         }
         private void checkClosedConnections() {
             Connection connection;
-            for (int i = 0; i < server.connections.size(); i++) {
-                connection = server.connections.get(i);
+            ConnectionList connectionList = Server.getInstance().getConnections();
+            for (int i = 0; i < connectionList.size(); i++) {
+                connection = connectionList.getConnection(i);
                 if (!connection.isConnected()) {
                     System.out.println(connection + " removed due to lack of connection.");
                     connection.purge();
-                    server.connections.remove(i);
+                    connectionList.removeConnection(i);
                 }
             }
         }
@@ -52,7 +55,7 @@ public class ConnectionListener extends Thread {
     @Override
     public void run() {
         while (server.isRunning()) {
-            if (server.connections.size() <= 1) {
+            if (Server.getInstance().clientsConnected() <= 1) {
                 System.out.println("Listening for a new connection");
                 waitForConnection();
                 sleepThread(2.5);
@@ -66,7 +69,7 @@ public class ConnectionListener extends Thread {
     private void waitForConnection(){
         try {
             connectionSocket = serverSocket.accept();
-            server.addConnection(new Connection(connectionSocket));
+            Server.getInstance().getConnections().addConnection(new Connection(connectionSocket));
             System.out.println("Connection " + connectionSocket + " established.");
         } catch (IOException e) {
             System.out.println("Connection Interrupted");
