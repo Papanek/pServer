@@ -14,7 +14,7 @@ import java.awt.*;
  * Date :   2/6/2016
  * ******************************
  **/
-public class PongPlayer extends GameObject implements Sizable, Updatable {
+public class PongPlayer extends GameObject {
     private String id;
     private double speedY;
     private int width, height;

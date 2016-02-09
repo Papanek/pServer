@@ -7,7 +7,7 @@ package game;
  * Date :   2/6/2016
  * ******************************
  **/
-public abstract class GameObject implements Locatable, Drawable, Updatable, java.io.Serializable {
+public abstract class GameObject implements Locatable, Drawable, Updatable, Sizable, java.io.Serializable {
 
     protected double x,y;
 

@@ -15,7 +15,6 @@ import java.awt.*;
  * ******************************
  **/
 public class GameEngine implements Runnable {
-    private final int FPS = 60;
     private final int UPS = 30;
     private Thread gameLoopThread;
     private Timer timer;
@@ -62,7 +61,6 @@ public class GameEngine implements Runnable {
         float accumulator = 0f;
         float interval = 1f / UPS;
         boolean running = true;
-        int x = 0;
         while (running) {
             ellapsedTime = timer.getEllapsedTime();
             accumulator += ellapsedTime;
@@ -77,18 +75,6 @@ public class GameEngine implements Runnable {
             panel.render(gameState,accumulator/interval);
             //TODO output game state to player connections
 
-            sync();
-        }
-    }
-
-    private void sync() {
-        float loopSlot = 1f / FPS;
-        double endTime = timer.getLastLoopTime() + loopSlot;
-        while (timer.getTime() < endTime) {
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-            }
         }
     }
 
