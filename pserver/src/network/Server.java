@@ -1,13 +1,12 @@
 package network;
 
-import game.Player;
+import engine.GameEngine;
+import network.listeners.ConnectionListener;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.LinkedList;
 
 /**
  * ******************************
@@ -16,49 +15,71 @@ import java.util.LinkedList;
  * Date :   2/4/2016
  * ******************************
  **/
-public class Server {
-    private final int PORT = 30480;
-    private ServerSocket serverSocket;
+public class Server extends Thread {
     private InetAddress hostAddress;
-    private Socket socket;
-    public static LinkedList<Player> players;
-    public Server(){
-        players = new LinkedList<>();
-        try {
-            hostAddress = InetAddress.getLocalHost();
-        } catch (UnknownHostException e){
-            e.printStackTrace();
-            System.exit(-1);
-        }
-        try {
-            serverSocket = new ServerSocket(PORT,0,hostAddress);
-        } catch (IOException e){
-            e.printStackTrace();
-            System.exit(-1);
-        }
-        System.out.println("Socket "+serverSocket+" created.");
+    private final int PORT = 30480;
+
+    private static Server theServer = new Server();
+    private ConnectionList connections;
+
+    private ConnectionListener connectionListener;
+    private boolean running = true;
+
+    public static synchronized Server getInstance() {
+        return theServer;
     }
 
-    public void run(){
-        System.out.println("Pong Server Started!");
-        Player player;
-        while(true){
-            for(int i = 0; i< players.size(); i++){
-                player = players.get(i);
-                if(!player.isConnected()){
-                    System.out.println(player +" removed due to lack of connection.");
-                    player.purge();
-                    players.remove(i);
-                }
-            }
-            System.out.println("Listening for new connections..");
-            try{
-                socket = serverSocket.accept();
-            } catch (IOException e){
-                System.out.println("No user connected");
-            }
-            players.add(new Player(socket));
-            System.out.print("Player "+socket+" added.");
+    private Server() {
+        connections = new ConnectionList();
+        try {
+            hostAddress = InetAddress.getLocalHost();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            System.exit(-1);
         }
+        try {
+            connectionListener = new ConnectionListener(this, new ServerSocket(PORT, 0, hostAddress));
+            System.out.println("Server socket created.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
+        connectionListener.start();
+        this.start();
+    }
+
+    public void run() {
+        System.out.println("Pong Started!");
+        GameEngine engine = null;
+        while (running){
+            System.out.println(clientsConnected());
+            if(clientsConnected()==2&&engine==null){
+                engine = new GameEngine();
+                engine.start();
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e){}
+        }
+        shutdown();
+    }
+
+    private void shutdown(){
+        connections.disconnectAll();
+        running = false;
+        connectionListener.interrupt();
+        System.out.println("Server Shutdown");
+    }
+
+    public ConnectionList getConnections(){
+        return connections;
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    public int clientsConnected(){
+        return connections.size();
     }
 }
