@@ -1,14 +1,12 @@
 package game.pong.state;
 
 import engine.EngineConstants;
-import game.Drawable;
-import game.GameConstants;
-import game.GameObject;
-import game.GameState;
+import game.*;
 import network.Server;
 
 import java.awt.*;
 import java.util.LinkedList;
+import java.util.Vector;
 
 /**
  * ******************************
@@ -17,10 +15,8 @@ import java.util.LinkedList;
  * Date :   2/5/2016
  * ******************************
  **/
-public class PongGameState implements java.io.Serializable, GameState {
-    private LinkedList<GameObject> gameObjects;
+public class PongGameState extends GameState implements java.io.Serializable {
     public PongGameState(){
-        gameObjects = new LinkedList<>();
         gameObjects.add(new PongBall(EngineConstants.GAME_WIDTH/2,EngineConstants.GAME_HEIGHT/2));
         addPlayerOne(Server.getInstance().getConnections().getConnection(0).getId());
         addPlayerTwo(Server.getInstance().getConnections().getConnection(1).getId());
@@ -34,7 +30,7 @@ public class PongGameState implements java.io.Serializable, GameState {
     }
 
     @Override
-    public LinkedList<GameObject> getGameObjects() {
+    public Vector<GameObject> getGameObjects() {
         return gameObjects;
     }
 

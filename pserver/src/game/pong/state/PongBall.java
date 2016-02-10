@@ -1,9 +1,7 @@
 package game.pong.state;
 
 import game.GameConstants;
-import game.Sizable;
 import game.GameObject;
-import game.Updatable;
 
 import java.awt.*;
 
@@ -15,14 +13,17 @@ import java.awt.*;
  * ******************************
  **/
 public class PongBall extends GameObject {
-    private int width, height;
     private int speedX, speedY;
-    public PongBall(int x, int y) {
+    public PongBall(double x, double y) {
         super(x, y);
-        width = GameConstants.BALL_WIDTH;
-        height = GameConstants.BALL_HEIGHT;
+        setDimensions(GameConstants.BALL_WIDTH,GameConstants.BALL_HEIGHT );
         speedX = 5;
         speedY = 5;
+    }
+
+    @Override
+    public void setDimensions(int width, int height) {
+        this.width = width; this.height=height;
     }
 
     @Override
@@ -50,16 +51,6 @@ public class PongBall extends GameObject {
         g.translate(x+speedX*extrapolation,y+speedY*extrapolation);
         g.fillOval(0,0,width,height);
         g.translate(-(x+speedX*extrapolation),-(y+speedY*extrapolation));
-    }
-
-    @Override
-    public int getWidth() {
-        return width;
-    }
-
-    @Override
-    public int getHeight() {
-        return height;
     }
 
     @Override
