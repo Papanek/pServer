@@ -29,7 +29,7 @@ public class GameEngine implements Runnable {
         gameLogic = new PongLogic();
         gameState = new PongGameState();
         timer = new Timer();
-        panel = new Panel(gameState);
+        panel = new Panel();
         panel.setPreferredSize(new Dimension(800,600));
         panel.setFocusable(true);
         panel.requestFocusInWindow();
