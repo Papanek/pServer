@@ -12,17 +12,15 @@ public interface Graphable {
     double getY();
     int getWidth();
     int getHeight();
-    void setDimensions(int width, int height);
+    void setDimensions();
     default double getTopBound() {
-        return getY()-(getHeight()/2);
+        return getY()-getHalfHeight();
     }
-    default double getBottomBound() {
-        return getY()+(getHeight()/2);
-    }
-    default double getRightBound() {
-        return getX()+(getWidth()/2);
-    }
+    default double getBottomBound() { return getY()+getHalfHeight(); }
+    default double getRightBound() { return getX()+getHalfWidth(); }
     default double getLeftBound() {
-        return getY()-(getWidth()/2);
+        return getX()-getHalfWidth();
     }
+    default double getHalfWidth() { return getWidth()/2; }
+    default double getHalfHeight() { return getHeight()/2; }
 }

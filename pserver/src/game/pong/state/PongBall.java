@@ -13,17 +13,17 @@ import java.awt.*;
  * ******************************
  **/
 public class PongBall extends GameObject {
-    private int speedX, speedY;
     public PongBall(double x, double y) {
         super(x, y);
-        setDimensions(GameConstants.BALL_WIDTH,GameConstants.BALL_HEIGHT );
-        speedX = 5;
-        speedY = 5;
+        setDimensions();
+        speedX = 2.5;
+        speedY = 2.5;
     }
 
     @Override
-    public void setDimensions(int width, int height) {
-        this.width = width; this.height=height;
+    public void setDimensions() {
+        this.width = GameConstants.BALL_WIDTH;
+        this.height = GameConstants.BALL_HEIGHT;
     }
 
     @Override
@@ -34,23 +34,21 @@ public class PongBall extends GameObject {
     private void move(){
         this.x += speedX;
         this.y += speedY;
-        if(x>GameConstants.ARENA_WIDTH-getWidth()){
+        if(getRightBound()>GameConstants.GAME_WIDTH){
             speedX *= -1;
-        } else if(x<0){
+        } else if(getLeftBound()<0){
             speedX *= -1;
         }
-        if(y>GameConstants.ARENA_HEIGHT-getHeight()){
+        if(getBottomBound()>GameConstants.GAME_HEIGHT){
             speedY *= -1;
-        } else if(y<0){
+        } else if(getTopBound()<0){
             speedY *= -1;
         }
     }
 
     @Override
-    public void draw(Graphics2D g, float extrapolation) {
-        g.translate(x+speedX*extrapolation,y+speedY*extrapolation);
+    public void draw(Graphics2D g) {
         g.fillOval(0,0,width,height);
-        g.translate(-(x+speedX*extrapolation),-(y+speedY*extrapolation));
     }
 
     @Override

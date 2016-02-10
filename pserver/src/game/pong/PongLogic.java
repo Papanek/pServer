@@ -1,7 +1,9 @@
 package game.pong;
 
+import engine.EngineConstants;
 import engine.GameLogic;
 import game.GameState;
+import game.pong.state.PongBall;
 
 /**
  * ******************************
@@ -12,7 +14,7 @@ import game.GameState;
  **/
 public class PongLogic implements GameLogic {
     @Override
-    public void init() {
+    public void init(GameState state) {
 
     }
 
@@ -22,7 +24,7 @@ public class PongLogic implements GameLogic {
     }
 
     @Override
-    public void input() {
+    public void input(GameState state) {
 
     }
 }

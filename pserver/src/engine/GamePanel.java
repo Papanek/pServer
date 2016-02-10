@@ -1,5 +1,6 @@
 package engine;
 
+import game.GameConstants;
 import game.GameState;
 
 import javax.swing.*;
@@ -15,33 +16,27 @@ import java.awt.image.BufferedImage;
  * Date :   2/4/2016
  * ******************************
  **/
-public class Panel extends JPanel implements KeyListener {
-    float extrapolation;
-    BufferedImage objectMesh;
+public class GamePanel extends JPanel implements KeyListener {
     private boolean inputUp = false, inputDown = false;
-    private int width, height;
+    private BufferedImage objectMesh;
+    private GameRender gameRender;
+    private GameState state;
 
-    public Panel() {
-        this.width = EngineConstants.GAME_WIDTH;
-        this.height = EngineConstants.GAME_HEIGHT;
+    public GamePanel(GameState state) {
         objectMesh = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
+        gameRender = new GameRender();
+        this.state = state;
         addKeyListener(this);
     }
 
     public void init() {
-        this.setPreferredSize(new Dimension(width, height));
+        this.setPreferredSize(new Dimension(GameConstants.GAME_WIDTH, GameConstants.GAME_HEIGHT));
         this.setFocusable(true);
         this.requestFocusInWindow();
-        this.setBackground(Color.black);
     }
 
-    public void update() {
-
-    }
-
-    public void render(GameState state, float extrapolation)
-    {
-        this.extrapolation = extrapolation;
+    public void render(float extrapolation) {
+        gameRender.setExtrapolation(extrapolation);
         repaint();
     }
 
@@ -50,15 +45,9 @@ public class Panel extends JPanel implements KeyListener {
         Graphics2D g = objectMesh.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-
-        g.setColor(Color.cyan);
-        g.fillRect(0, 0, 800, 600);
-
-        g.setColor(Color.BLACK);
-        //state.draw(g, extrapolation);
-
-        _g.drawImage(objectMesh, 0, 0, null);
+        gameRender.render(g,state.getGameObjects());
         g.dispose();
+        _g.drawImage(objectMesh, 0, 0, null);
     }
 
     @Override

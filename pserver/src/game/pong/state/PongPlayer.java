@@ -17,15 +17,15 @@ public class PongPlayer extends GameObject {
     private double speedY;
     public PongPlayer(String id, int x, int y){
         super(x,y);
-        setDimensions(GameConstants.PLAYER_WIDTH,GameConstants.PLAYER_HEIGHT);
+        setDimensions();
         this.id = id;
         speedY = 0;
         speedY = 1;
     }
 
     @Override
-    public void setDimensions(int width, int height) {
-        this.width = width; this.height = height;
+    public void setDimensions() {
+        this.width = GameConstants.PLAYER_WIDTH; this.height = GameConstants.PLAYER_HEIGHT;
     }
 
     @Override
@@ -35,18 +35,16 @@ public class PongPlayer extends GameObject {
 
     private void move(){
         this.y += speedY;
-        if(y>GameConstants.ARENA_HEIGHT-getHeight()){
+        if(getBottomBound()>GameConstants.GAME_HEIGHT){
             speedY *= -1;
-        } else if(y<0){
+        } else if(getTopBound()<0){
             speedY *= -1;
         }
     }
 
     @Override
-    public void draw(Graphics2D g, float extrapolation) {
-        g.translate(x,y+speedY*extrapolation);
+    public void draw(Graphics2D g) {
         g.fillRect(0,0,width,height);
-        g.translate(-x,-(y+speedY*extrapolation));
     }
 
     @Override

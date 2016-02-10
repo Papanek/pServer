@@ -9,12 +9,12 @@ import java.util.Vector;
  * Date :   2/9/2016
  * ******************************
  **/
-public abstract class GameState implements Drawable, Updatable {
+public abstract class GameState implements Updatable, java.io.Serializable {
     protected Vector<GameObject> gameObjects;
 
     public GameState(){
         gameObjects = new Vector<>();
     }
 
-    protected abstract Vector<GameObject> getGameObjects();
+    public abstract Vector<GameObject> getGameObjects();
 }

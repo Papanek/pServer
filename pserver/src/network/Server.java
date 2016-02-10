@@ -50,13 +50,7 @@ public class Server extends Thread {
 
     public void run() {
         System.out.println("Pong Started!");
-        GameEngine engine = null;
         while (running){
-            System.out.println(clientsConnected());
-            if(clientsConnected()==2&&engine==null){
-                engine = new GameEngine();
-                engine.start();
-            }
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e){}
