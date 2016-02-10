@@ -1,7 +1,7 @@
 package game.pong;
 
-import game.GameState;
 import engine.GameLogic;
+import game.GameState;
 
 /**
  * ******************************

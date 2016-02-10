@@ -1,6 +1,5 @@
 package network;
 
-import game.GameState;
 import network.listeners.InputListener;
 
 import java.io.IOException;

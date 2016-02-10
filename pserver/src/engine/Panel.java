@@ -20,13 +20,11 @@ public class Panel extends JPanel implements KeyListener {
     BufferedImage objectMesh;
     private boolean inputUp = false, inputDown = false;
     private int width, height;
-    private GameState state;
 
-    public Panel(GameState state) {
+    public Panel() {
         this.width = EngineConstants.GAME_WIDTH;
         this.height = EngineConstants.GAME_HEIGHT;
         objectMesh = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
-        this.state = state;
         addKeyListener(this);
     }
 
@@ -43,7 +41,6 @@ public class Panel extends JPanel implements KeyListener {
 
     public void render(GameState state, float extrapolation)
     {
-        this.state = state;
         this.extrapolation = extrapolation;
         repaint();
     }
@@ -58,7 +55,7 @@ public class Panel extends JPanel implements KeyListener {
         g.fillRect(0, 0, 800, 600);
 
         g.setColor(Color.BLACK);
-        state.draw(g, extrapolation);
+        //state.draw(g, extrapolation);
 
         _g.drawImage(objectMesh, 0, 0, null);
         g.dispose();

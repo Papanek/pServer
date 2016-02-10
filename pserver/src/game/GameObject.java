@@ -7,9 +7,10 @@ package game;
  * Date :   2/6/2016
  * ******************************
  **/
-public abstract class GameObject implements Locatable, Drawable, Updatable, Sizable, java.io.Serializable {
+public abstract class GameObject implements Graphable, Drawable, Updatable, java.io.Serializable {
 
     protected double x,y;
+    protected int width, height;
 
     public GameObject(double x, double y){
         this.x = x;
@@ -24,5 +25,15 @@ public abstract class GameObject implements Locatable, Drawable, Updatable, Siza
     @Override
     public double getY() {
         return y;
+    }
+
+    @Override
+    public int getWidth() {
+        return width;
+    }
+
+    @Override
+    public int getHeight() {
+        return height;
     }
 }
