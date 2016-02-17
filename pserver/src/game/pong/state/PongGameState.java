@@ -24,10 +24,10 @@ public class PongGameState extends GameState {
     }
 
     public void addPlayerOne(String id){
-        gameObjects.add(new PongPlayer(id,10,EngineConstants.GAME_HEIGHT/2));
+        gameObjects.add(new PongPlayer(id,20,EngineConstants.GAME_HEIGHT/2));
     }
     public void addPlayerTwo(String id){
-        gameObjects.add(new PongPlayer(id,EngineConstants.GAME_WIDTH- GameConstants.PLAYER_WIDTH-10,EngineConstants.GAME_HEIGHT/2));
+        gameObjects.add(new PongPlayer(id,EngineConstants.GAME_WIDTH- 20,EngineConstants.GAME_HEIGHT/2));
     }
 
     @Override

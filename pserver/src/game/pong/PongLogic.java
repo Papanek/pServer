@@ -25,6 +25,6 @@ public class PongLogic implements GameLogic {
 
     @Override
     public void input(GameState state) {
-
+        //TODO unpack player inputs
     }
 }

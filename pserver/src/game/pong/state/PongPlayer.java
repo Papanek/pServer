@@ -1,5 +1,6 @@
 package game.pong.state;
 
+import engine.GamePanel;
 import game.GameConstants;
 import game.GameObject;
 
@@ -19,8 +20,7 @@ public class PongPlayer extends GameObject {
         super(x,y);
         setDimensions();
         this.id = id;
-        speedY = 0;
-        speedY = 1;
+        speedY=0;
     }
 
     @Override
@@ -30,15 +30,38 @@ public class PongPlayer extends GameObject {
 
     @Override
     public void update() {
+        if(GamePanel.inputUp||GamePanel.inputDown) {
+            if (GamePanel.inputUp) {
+                speedY -= GameConstants.PLAYER_MOVESPEED;
+            }
+            if (GamePanel.inputDown) {
+                speedY += GameConstants.PLAYER_MOVESPEED;
+            }
+        } else {
+            if(speedY!=0){
+                if(speedY>0) {
+                    speedY -= GameConstants.PLAYER_STOPSPEED;
+                    if (speedY < 0) {
+                        speedY = 0;
+                    }
+                } else {
+                    speedY += GameConstants.PLAYER_STOPSPEED;
+                    if (speedY > 0) {
+                        speedY = 0;
+                    }
+                }
+            }
+        }
         move();
     }
 
     private void move(){
         this.y += speedY;
         if(getBottomBound()>GameConstants.GAME_HEIGHT){
-            speedY *= -1;
-        } else if(getTopBound()<0){
-            speedY *= -1;
+            this.y = GameConstants.GAME_HEIGHT-this.getHalfHeight();
+        }
+        if(getTopBound()<0){
+            this.y = this.getHalfHeight();
         }
     }
 

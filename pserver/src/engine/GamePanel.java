@@ -17,7 +17,7 @@ import java.awt.image.BufferedImage;
  * ******************************
  **/
 public class GamePanel extends JPanel implements KeyListener {
-    private boolean inputUp = false, inputDown = false;
+    public static boolean inputUp = false, inputDown = false;
     private BufferedImage objectMesh;
     private GameRender gameRender;
     private GameState state;
@@ -55,11 +55,13 @@ public class GamePanel extends JPanel implements KeyListener {
         if (!inputUp) {
             if (e.getKeyCode() == KeyEvent.VK_UP) {
                 inputUp = true;
+                System.out.println("UP");
             }
         }
         if (!inputDown) {
             if (e.getKeyCode() == KeyEvent.VK_DOWN) {
                 inputDown = true;
+                System.out.println("DOWN");
             }
         }
     }
@@ -67,9 +69,11 @@ public class GamePanel extends JPanel implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_UP) {
+            System.out.println("!UP");
             inputUp = false;
         }
         if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+            System.out.println("!DOWN");
             inputDown = false;
         }
     }
