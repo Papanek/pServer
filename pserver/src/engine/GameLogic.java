@@ -10,9 +10,9 @@ import game.GameState;
  * ******************************
  **/
 public interface GameLogic {
-    void init();
+    void init(GameState state);
 
     void update(GameState state);
 
-    void input();
+    void input(GameState state);
 }

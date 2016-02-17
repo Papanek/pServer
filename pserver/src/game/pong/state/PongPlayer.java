@@ -1,5 +1,6 @@
 package game.pong.state;
 
+import engine.GamePanel;
 import game.GameConstants;
 import game.GameObject;
 
@@ -17,36 +18,56 @@ public class PongPlayer extends GameObject {
     private double speedY;
     public PongPlayer(String id, int x, int y){
         super(x,y);
-        setDimensions(GameConstants.PLAYER_WIDTH,GameConstants.PLAYER_HEIGHT);
+        setDimensions();
         this.id = id;
-        speedY = 0;
-        speedY = 1;
+        speedY=0;
     }
 
     @Override
-    public void setDimensions(int width, int height) {
-        this.width = width; this.height = height;
+    public void setDimensions() {
+        this.width = GameConstants.PLAYER_WIDTH; this.height = GameConstants.PLAYER_HEIGHT;
     }
 
     @Override
     public void update() {
+        if(GamePanel.inputUp||GamePanel.inputDown) {
+            if (GamePanel.inputUp) {
+                speedY -= GameConstants.PLAYER_MOVESPEED;
+            }
+            if (GamePanel.inputDown) {
+                speedY += GameConstants.PLAYER_MOVESPEED;
+            }
+        } else {
+            if(speedY!=0){
+                if(speedY>0) {
+                    speedY -= GameConstants.PLAYER_STOPSPEED;
+                    if (speedY < 0) {
+                        speedY = 0;
+                    }
+                } else {
+                    speedY += GameConstants.PLAYER_STOPSPEED;
+                    if (speedY > 0) {
+                        speedY = 0;
+                    }
+                }
+            }
+        }
         move();
     }
 
     private void move(){
         this.y += speedY;
-        if(y>GameConstants.ARENA_HEIGHT-getHeight()){
-            speedY *= -1;
-        } else if(y<0){
-            speedY *= -1;
+        if(getBottomBound()>GameConstants.GAME_HEIGHT){
+            this.y = GameConstants.GAME_HEIGHT-this.getHalfHeight();
+        }
+        if(getTopBound()<0){
+            this.y = this.getHalfHeight();
         }
     }
 
     @Override
-    public void draw(Graphics2D g, float extrapolation) {
-        g.translate(x,y+speedY*extrapolation);
+    public void draw(Graphics2D g) {
         g.fillRect(0,0,width,height);
-        g.translate(-x,-(y+speedY*extrapolation));
     }
 
     @Override

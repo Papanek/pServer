@@ -5,7 +5,6 @@ import game.pong.PongLogic;
 import game.pong.state.PongGameState;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * ******************************
@@ -20,25 +19,14 @@ public class GameEngine implements Runnable {
     private Timer timer;
     private GameLogic gameLogic;
     private GameState gameState;
-
-    JFrame frame = new JFrame();
-    Panel panel;
+    private GameWindow gameWindow;
 
     public GameEngine() {
         gameLoopThread = new Thread(this, "Game_loop_thread");
         gameLogic = new PongLogic();
         gameState = new PongGameState();
+        gameWindow = new GameWindow(gameState);
         timer = new Timer();
-        panel = new Panel();
-        panel.setPreferredSize(new Dimension(800,600));
-        panel.setFocusable(true);
-        panel.requestFocusInWindow();
-        frame.add(panel);
-        frame.setResizable(false);
-        frame.pack();
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
     }
 
     public void start() {
@@ -53,7 +41,8 @@ public class GameEngine implements Runnable {
 
     private void init() {
         timer.init();
-        gameLogic.init();
+        gameWindow.init();
+        gameLogic.init(gameState);
     }
 
     private void gameLoop() {
@@ -65,17 +54,17 @@ public class GameEngine implements Runnable {
             ellapsedTime = timer.getEllapsedTime();
             accumulator += ellapsedTime;
 
-            gameLogic.input();
+            //TODO retrieve inputs
+            gameLogic.input(gameState);
 
             while (accumulator >= interval) {
                 gameLogic.update(gameState);
                 accumulator -= interval;
             }
 
-            panel.render(gameState,accumulator/interval);
+            gameWindow.render(accumulator/interval);
             //TODO output game state to player connections
 
         }
     }
-
 }
